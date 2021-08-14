@@ -1,0 +1,73 @@
+﻿(SETQ *postinit* 3381)
+
+
+(DEFUN header()
+  (WRITE (STRCAT (NTXT) "G01 F1000"))
+  (WRITE (STRCAT (NTXT) "E100=2"))
+    (WRITE (STRCAT (NTXT) "E101=1"))
+      (WRITE (STRCAT (NTXT) "E102=0.65"))
+)
+
+(DEFUN rapid()
+  (WRITE (STRCAT (NTXT) "G00 X" (RTS $x) " Y" (RTS $y)))
+)
+
+(DEFUN tooldown ()
+  (WRITE (STRCAT (NTXT) "(CLS,ZEND)"))
+  (WRITE (STRCAT (NTXT) "(DLY,1)"))
+)
+
+(DEFUN piercing()
+  (COND
+    ((AND $useabr $wacode)
+      (WRITE (STRCAT (NTXT) "(CLS,M440)"))
+      (DELAY $delay)
+      (WRITE (STRCAT (NTXT) ";M4")))
+    ($useabr
+      (WRITE (STRCAT (NTXT) ";M10 (WATER AND ABRASIVE ON)")))
+    (T
+      (WRITE (STRCAT (NTXT) ";M21")))
+  )
+  (IF $circ (CIRC-PIERCING) (DELAY $time))
+)
+
+(DEFUN line ()
+  (IF $chkerf (WRITE (STRCAT (NTXT) "G4" (ITOA $kerf))))
+  (WRITE (STRCAT (NTXT) "G01 X" (RTS $x) " Y" (RTS $y) " F" (RTF $fe)))
+)
+
+(DEFUN arc (/ radie)
+  (SETQ radie (IF $short $r (- $r)))
+  (WRITE (STRCAT (NTXT) (IF $ccw "G03" "G02") " X" (RTS $x) " Y" (RTS $y) " R" (RTS radie) " F" (RTF $fe)))
+)
+
+(DEFUN cutoff()
+  (WRITE (STRCAT (NTXT) "G00"))
+  (IF (AND $useabr $wacode)
+    (PROGN
+      (WRITE (STRCAT (NTXT) "M8" (MSG "")))
+      (DELAY $delay))
+  )
+  (WRITE (STRCAT (NTXT) "M10"))
+  (DELAY $time)
+  (IF $chkerf (WRITE (STRCAT (NTXT) "G4" (ITOA $kerf))))
+)
+
+(DEFUN toolup ()
+  (WRITE (STRCAT (NTXT) "(CLS,ZEND)"))
+)
+
+(DEFUN delay (value)
+  (IF (> value 0.1)
+    (PROGN
+      (SIM-DELAY value)
+      (WRITE (STRCAT (NTXT) "(DLY," (RTT value)")")))
+  )
+)
+
+(DEFUN footer()
+  (WRITE (STRCAT (NTXT) "G00 X-1 Y1218"))
+  (WRITE (STRCAT (NTXT) ";(UAO,0)"))
+  (WRITE (STRCAT (NTXT) "(DLY,1)"))
+  (WRITE (STRCAT (NTXT) "M2"))
+)
