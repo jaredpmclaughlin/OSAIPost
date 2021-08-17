@@ -23,10 +23,62 @@ maximumCircularSweep = toRad(180);
 allowHelicalMoves = false;
 allowedCircularPlanes = 1 << PLANE_XY; // 
 
+// user-defined properties
+properties = {
+  writeMachine: {
+    title: "Write machine",
+    description: "Output the machine settings in the header of the code.",
+    group: 0,
+    type: "boolean",
+    value: true,
+    scope: "post"
+  },
+  showSequenceNumbers: {
+    title: "Use sequence numbers",
+    description: "Use sequence numbers for each block of outputted code.",
+    group: 1,
+    type: "boolean",
+    value: true,
+    scope: "post"
+  },
+  sequenceNumberStart: {
+    title: "Start sequence number",
+    description: "The number at which to start the sequence numbers.",
+    group: 1,
+    type: "integer",
+    value: 10,
+    scope: "post"
+  },
+  sequenceNumberIncrement: {
+    title: "Sequence number increment",
+    description: "The amount by which the sequence number is incremented by in each block.",
+    group: 1,
+    type: "integer",
+    value: 1,
+    scope: "post"
+  },
+  separateWordsWithSpace: {
+    title: "Separate words with space",
+    description: "Adds spaces between words if 'yes' is selected.",
+    type: "boolean",
+    value: true,
+    scope: "post"
+  }
+};
 
 // need to have the ability to write comments to start
 function writeComment(text){
     writeln(";"+ filterText(String(text).toUpperCase(), permittedCommentChars));
+}
+
+// write blocks with sequence number to output file
+function writeBlock() {
+  if (getProperty("showSequenceNumbers")) {
+    writeWords2("N" + sequenceNumber, arguments);
+    sequenceNumber += getProperty("sequenceNumberIncrement");
+  } else {
+    writeWords(arguments);
+  }
 }
 
 // this runs first?
@@ -44,6 +96,9 @@ function onOpen(){
     // #3 Ouput program name and header.
     // Copied from post-processor manual
     // According to OSAI manual, program names can be 48 characters
+
+    sequenceNumber = getProperty("sequenceNumberStart");
+
     if(programName){
         writeComment(programName);
     }
@@ -68,4 +123,10 @@ function onOpen(){
 
     var d = new Date(); // current date and time
     writeComment("    "+localize("Date")+":"+d.toLocaleDateString() +" "+d.toLocaleTimeString());
+
+    // #5. Output initial startup codes
+    writeBlock("G01 F1000") //setting feedrate
+    writeBlock("E100=2") //defining local variables. the cnc probably needs them to operate.
+    writeBlock("E101=1")
+    writeBlock("E102=0.65")
 }
