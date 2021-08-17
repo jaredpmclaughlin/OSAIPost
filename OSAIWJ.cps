@@ -68,7 +68,7 @@ properties = {
 
 // need to have the ability to write comments to start
 function writeComment(text){
-    writeln(";"+ filterText(String(text).toUpperCase(), permittedCommentChars));
+    writeln(";"+ String(text).toUpperCase());
 }
 
 // write blocks with sequence number to output file
