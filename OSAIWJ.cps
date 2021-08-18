@@ -129,9 +129,20 @@ function onOpen(){
     writeBlock("E102=0.65")
 }
 
-onClose(){
-    writeln();
-    optionalSection = false;
+function onLinear(_x,_y,_z,feed){
+    //var x = xOutput.format(_x);
+    //var y = yOutput.format(_y);
+    //var z = zOutput.format(_z);
+    //var f = getFeed(feed);
+
+    // we'll have to deal with kerf in here
+    // spit everything out to start with
+    writeln("G01 "+" X"+_x+" Y"+_y+" Z"+_z+" F"+feed);
+
+}
+
+function onClose(){
+    writeln("");
 
     // making this close correlation with the original Lisp post
     // with the intent to modify later 
@@ -139,5 +150,4 @@ onClose(){
     writeln("(DLY,1)");
     writeln("M2");
     writeln("%");
-    
 }
