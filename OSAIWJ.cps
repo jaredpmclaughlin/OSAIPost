@@ -128,3 +128,16 @@ function onOpen(){
     writeBlock("E101=1")
     writeBlock("E102=0.65")
 }
+
+onClose(){
+    writeln();
+    optionalSection = false;
+
+    // making this close correlation with the original Lisp post
+    // with the intent to modify later 
+    writeln("G00 X-1 Y1218");
+    writeln("(DLY,1)");
+    writeln("M2");
+    writeln("%");
+    
+}
