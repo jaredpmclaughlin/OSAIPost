@@ -1,8 +1,7 @@
 /**
-    Written by Jared McLaughlin ( jared.p.mclaughlin@gmail.com )
+    Written by Jared McLaughlin ( jared.p.mclaughlin@gmail.com ) and David Scutar.
     
     No license claimed, copy and modify at will.
-
 */
 
 description = "OSAI/Leonardo";
@@ -81,8 +80,6 @@ function writeBlock() {
   }
 }
 
-// this runs first?
-// this _could_ correlate to the header
 function onOpen(){
     // write the initial comments
    /* from the post manual:
@@ -118,10 +115,11 @@ function onOpen(){
         writeComment("    :"+getParamter("document-path"));
     }
 
-    writeComment("    "+"OSAIPost v0.1 by J.McLaughlin");
+    writeComment("    "+"OSAIPost v0.1 by J.McLaughlin and David Scutar.");
     writeComment("    "+"jared.p.mclaughlin@gmail.com");
 
     var d = new Date(); // current date and time
+    writeComment(" NC program genereated at : ");
     writeComment("    "+localize("Date")+":"+d.toLocaleDateString() +" "+d.toLocaleTimeString());
 
     // #5. Output initial startup codes
